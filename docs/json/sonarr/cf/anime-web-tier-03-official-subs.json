@@ -34,6 +34,15 @@
       }
     },
     {
+      "name": "AnoZu",
+      "implementation": "ReleaseTitleSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "\\[AnoZu\\]|-AnoZu\\b"
+      }
+    },
+    {
       "name": "SubsPlease",
       "implementation": "ReleaseTitleSpecification",
       "negate": false,
