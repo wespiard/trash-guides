@@ -187,6 +187,15 @@
       }
     },
     {
+      "name": "RaiN",
+      "implementation": "ReleaseTitleSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "\\[RaiN\\]|-RaiN\\b"
+      }
+    },
+    {
       "name": "Reza",
       "implementation": "ReleaseTitleSpecification",
       "negate": false,
