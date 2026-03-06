@@ -124,6 +124,7 @@ We've made 3 guides related to this.
 | [Scene](#scene)                                       |                                                                    |
 | [VC-1](#vc-1)                                         |                                                                    |
 | [VP9](#vp9)                                           |                                                                    |
+| [WiTH AD](#with-ad)                                   |                                                                    |
 | [x264](#x264)                                         |                                                                    |
 | [x265 (no HDR/DV)](#x265-no-hdrdv)                    |                                                                    |
 | [x265](#x265)                                         |                                                                    |
@@ -131,16 +132,16 @@ We've made 3 guides related to this.
 
 ---
 
-| Anime                                                                       | Anime                                                                 | Anime     | Anime Optional                        |
-| --------------------------------------------------------------------------- | --------------------------------------------------------------------- | --------- | ------------------------------------- |
-| [Anime BD Tier 01 (Top SeaDex Muxers)](#anime-bd-tier-01-top-seadex-muxers) | [Anime Web Tier 01 (Muxers)](#anime-web-tier-01-muxers)               | [v0](#v0) | [Uncensored](#uncensored)             |
-| [Anime BD Tier 02 (SeaDex Muxers)](#anime-bd-tier-02-seadex-muxers)         | [Anime Web Tier 02 (Top FanSubs)](#anime-web-tier-02-top-fansubs)     | [v1](#v1) | [10bit](#10bit)                       |
-| [Anime BD Tier 03 (SeaDex Muxers)](#anime-bd-tier-03-seadex-muxers)         | [Anime Web Tier 03 (Official Subs)](#anime-web-tier-03-official-subs) | [v2](#v2) | [Anime Dual Audio](#anime-dual-audio) |
-| [Anime BD Tier 04 (SeaDex Muxers)](#anime-bd-tier-04-seadex-muxers)         | [Anime Web Tier 04 (Official Subs)](#anime-web-tier-04-official-subs) | [v3](#v3) | [Dubs Only](#dubs-only)               |
-| [Anime BD Tier 05 (Remuxes)](#anime-bd-tier-05-remuxes)                     | [Anime Web Tier 05 (FanSubs)](#anime-web-tier-05-fansubs)             | [v4](#v4) |                                       |
-| [Anime BD Tier 06 (FanSubs)](#anime-bd-tier-06-fansubs)                     | [Anime Web Tier 06 (FanSubs)](#anime-web-tier-06-fansubs)             |           |                                       |
-| [Anime BD Tier 07 (P2P/Scene)](#anime-bd-tier-07-p2pscene)                  | [Anime Raws](#anime-raws)                                             |           |                                       |
-| [Anime BD Tier 08 (Mini Encodes)](#anime-bd-tier-08-mini-encodes)           | [Anime LQ Groups](#anime-lq-groups)                                   |           |                                       |
+| Anime                                  | Anime                                   | Anime     | Anime Optional                        |
+| -------------------------------------- | --------------------------------------- | --------- | ------------------------------------- |
+| [Anime BD Tier 01](#anime-bd-tier-01)  | [Anime Web Tier 01](#anime-web-tier-01) | [v0](#v0) | [Uncensored](#uncensored)             |
+| [Anime BD Tier 02](#anime-bd-tier-02)  | [Anime Web Tier 02](#anime-web-tier-02) | [v1](#v1) | [10bit](#10bit)                       |
+| [Anime BD Tier 03](#anime-bd-tier-03)  | [Anime Web Tier 03](#anime-web-tier-03) | [v2](#v2) | [Anime Dual Audio](#anime-dual-audio) |
+| [Anime BD Tier 04](#anime-bd-tier-04)  | [Anime Web Tier 04](#anime-web-tier-04) | [v3](#v3) | [Dubs Only](#dubs-only)               |
+| [Anime BD Tier 05](#anime-bd-tier-05)  | [Anime Web Tier 05](#anime-web-tier-05) | [v4](#v4) |                                       |
+| [Anime BD Tier 06](#anime-bd-tier-06)  | [Anime Web Tier 06](#anime-web-tier-06) |           |                                       |
+| [Anime BD Tier 07](#anime-bd-tier-07)  | [Anime Raws](#anime-raws)               |           |                                       |
+| [Anime BD Tier 08](#anime-bd-tier-08)  | [Anime LQ Groups](#anime-lq-groups)     |           |                                       |
 
 ---
 
@@ -160,6 +161,12 @@ We've made 3 guides related to this.
 |                                                 |                                                       | [FR Anime FanSub](#fr-anime-fansub)             |                      |
 |                                                 |                                                       | [FR Scene Groups](#fr-scene-groups)             |                      |
 |                                                 |                                                       | [FR LQ](#fr-lq)                                 |                      |
+
+---
+
+| Custom Format Groups                                    |
+| ------------------------------------------------------- |
+| [Custom Format Groups](#custom-format-groups)           |
 
 ---
 
@@ -1379,6 +1386,22 @@ We've made 3 guides related to this.
 
 ---
 
+### WiTH AD
+
+??? question "Description - [Click to show/hide]"
+
+    {! include-markdown "../../includes/cf-descriptions/with-ad.md" !}
+
+??? example "JSON - [Click to show/hide]"
+
+    ```json
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/with-ad.json' %]][[% endfilter %]]
+    ```
+
+<sub><sup>[TOP](#index)</sup></sub>
+
+---
+
 ## HQ Release Groups
 
 ---
@@ -2251,224 +2274,224 @@ We've made 3 guides related to this.
 
 ---
 
-### Anime BD Tier 01 (Top SeaDex Muxers)
+### Anime BD Tier 01
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-01-top-seadex-muxers.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-01.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-01-top-seadex-muxers.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-01.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime BD Tier 02 (SeaDex Muxers)
+### Anime BD Tier 02
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-02-seadex-muxers.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-02.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-02-seadex-muxers.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-02.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime BD Tier 03 (SeaDex Muxers)
+### Anime BD Tier 03
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-03-seadex-muxers.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-03.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-03-seadex-muxers.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-03.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime BD Tier 04 (SeaDex Muxers)
+### Anime BD Tier 04
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-04-seadex-muxers.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-04.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-04-seadex-muxers.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-04.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime BD Tier 05 (Remuxes)
+### Anime BD Tier 05
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-05-remuxes.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-05.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-05-remuxes.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-05.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime BD Tier 06 (FanSubs)
+### Anime BD Tier 06
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-06-fansubs.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-06.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-06-fansubs.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-06.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime BD Tier 07 (P2P/Scene)
+### Anime BD Tier 07
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-07-p2pscene.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-07.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-07-p2pscene.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-07.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime BD Tier 08 (Mini Encodes)
+### Anime BD Tier 08
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-08-mini-encodes.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-bd-tier-08.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-08-mini-encodes.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-bd-tier-08.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime Web Tier 01 (Muxers)
+### Anime Web Tier 01
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-web-tier-01-muxers.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-web-tier-01.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-web-tier-01-muxers.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-web-tier-01.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime Web Tier 02 (Top FanSubs)
+### Anime Web Tier 02
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-web-tier-02-top-fansubs.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-web-tier-02.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-web-tier-02-top-fansubs.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-web-tier-02.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime Web Tier 03 (Official Subs)
+### Anime Web Tier 03
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-web-tier-03-official-subs.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-web-tier-03.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-web-tier-03-official-subs.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-web-tier-03.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime Web Tier 04 (Official Subs)
+### Anime Web Tier 04
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-web-tier-04-official-subs.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-web-tier-04.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-web-tier-04-official-subs.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-web-tier-04.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime Web Tier 05 (FanSubs)
+### Anime Web Tier 05
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-web-tier-05-fansubs.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-web-tier-05.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-web-tier-05-fansubs.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-web-tier-05.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
 
 ---
 
-### Anime Web Tier 06 (FanSubs)
+### Anime Web Tier 06
 
 ??? question "Description - [Click to show/hide]"
 
-    {! include-markdown "../../includes/cf-descriptions/anime-web-tier-06-fansubs.md" !}
+    {! include-markdown "../../includes/cf-descriptions/anime-web-tier-06.md" !}
 
 ??? example "JSON - [Click to show/hide]"
 
     ```json
-    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-web-tier-06-fansubs.json' %]][[% endfilter %]]
+    [[% filter indent(width=4) %]][[% include 'json/radarr/cf/anime-web-tier-06.json' %]][[% endfilter %]]
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
@@ -3438,3 +3461,66 @@ We've made 3 guides related to this.
     ```
 
 <sub><sup>[TOP](#index)</sup></sub>
+
+---
+
+## Custom Format Groups
+
+Custom Format Groups are logical groupings of custom formats used by sync tools such as [Recyclarr](https://recyclarr.dev){:target="_blank" rel="noopener noreferrer"} and [Notifiarr](https://notifiarr.com){:target="_blank" rel="noopener noreferrer"}. Each group bundles related custom formats together for easier profile management and/or display.
+
+!!! info
+
+    Custom Format Groups are metadata used by external sync tools and are shown here for reference only. They are **not** designed to be imported into Radarr and cannot be used directly within the application.
+
+---
+
+<!-- markdownlint-disable MD011 MD022 MD055 MD056 -->
+{%- macro cf_slug(name) -%}{{ name | lower | replace('+', 'plus') | replace('(', '') | replace(')', '') | replace('/', '') | replace('.', '') | replace(' ', '-') | replace('--', '-') }}{%- endmacro -%}
+{% set ns = namespace(current_category='') -%}
+{% for key, group in radarr['cf-groups']|dictsort -%}
+{% if not (key.startswith('sqp-') or key.endswith('-sqp')) -%}
+{% set category = group['name'].split(']')[0][1:] -%}
+{% if category != ns.current_category -%}
+{% set ns.current_category = category -%}
+
+### {{ category }}
+
+---
+
+{% endif -%}
+
+#### {{ group['name'].split('] ')[1] }}
+
+| Group Name | Trash ID | Default |
+| --- | --- | :---: |
+| {{ group['name'] }} | `{{ group['trash_id'] }}` | {% if group['default'] is defined and group['default'] == 'true' %}:white_check_mark:{% else %}:x:{% endif %} |
+
+??? question "Description - [Click to show/hide]"
+
+    {{ group['trash_description'] | replace('<br>', '\n    ') }}
+
+| Custom Format | Trash ID | Required |
+| --- | --- | :---: |
+{% for cf in group['custom_formats'] -%}
+| [{{ cf['name'] }}](#{{ cf_slug(cf['name']) }}) | `{{ cf['trash_id'] }}` | {% if cf['required'] %}:white_check_mark:{% else %}:x:{% endif %} |
+{% endfor %}
+
+{% if group.get('quality_profiles', {}).get('include', {}) -%}
+??? abstract "Applicable Quality Profiles - [Click to show/hide]"
+
+    | Quality Profile | Trash ID |
+    | --- | --- |
+    {%- for pname, pid in group.get('quality_profiles', {}).get('include', {})|dictsort %}
+    {%- if '[sqp]' not in pname|lower %}
+    | {{ pname }} | `{{ pid }}` |
+    {%- endif %}
+    {%- endfor %}
+
+{% endif -%}
+<sub><sup>[TOP](#index)</sup></sub>
+
+---
+
+{% endif -%}
+{% endfor -%}
+<!-- markdownlint-enable MD011 MD022 MD055 MD056 -->
