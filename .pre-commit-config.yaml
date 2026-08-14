@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.0
+    rev: 0.37.4
     hooks:
       - id: check-jsonschema
         name: Validate Guide only Custom Formats
@@ -44,6 +44,30 @@ repos:
         types: [json]
         args: ["-v", "--schemafile", "schemas/sonarr-naming.schema.json"]
 
+      - id: check-jsonschema
+        name: Validate Conflicts
+        files: ^docs/json/(radarr|sonarr)/conflicts\.json$
+        types: [json]
+        args: ["-v", "--schemafile", "schemas/conflicts.schema.json"]
+
+  - repo: local
+    hooks:
+      - id: validate-custom-formats
+        name: Validate Custom Formats
+        entry: python scripts/validate-custom-formats.py
+        language: python
+        pass_filenames: false
+        files: >-
+          ^docs/json/(radarr|sonarr)/(cf|cf-groups|quality-profiles)/|^docs/json/(radarr|sonarr)/conflicts\.json$
+
+      - id: validate-quality-profiles
+        name: Validate Quality Profiles
+        entry: python scripts/validate-quality-profiles.py
+        language: python
+        pass_filenames: false
+        files: >-
+          ^docs/json/(radarr|sonarr)/(cf|quality-profiles|quality-profile-groups|cf-groups)/
+
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.38.0
     hooks:
@@ -53,7 +77,7 @@ repos:
         args: ["-c", ".yamllint.yml"]
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.48.0
+    rev: v0.49.1
     hooks:
       - id: markdownlint-fix
         name: Markdown Lint (autofix)
@@ -61,7 +85,12 @@ repos:
         args: ["-c", ".markdownlint.yaml"]
 
   - repo: https://github.com/editorconfig-checker/editorconfig-checker
-    rev: v3.6.1
+    rev: v3.10.0
     hooks:
       - id: editorconfig-checker
         name: EditorConfig Lint
+
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.29.0
+    hooks:
+      - id: zizmor

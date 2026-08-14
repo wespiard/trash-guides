@@ -2,29 +2,12 @@
   "trash_id": "d84935abd3f8556dcd51d4f27e22d0a6",
   "trash_scores": {
     "default": 1600,
-    "french-multi-vf": 0
+    "french-multi-vf": 0,
+    "german-anime": 150
   },
   "name": "WEB Tier 03",
   "includeCustomFormatWhenRenaming": false,
   "specifications": [
-    {
-      "name": "WEBDL",
-      "implementation": "SourceSpecification",
-      "negate": false,
-      "required": false,
-      "fields": {
-        "value": 3
-      }
-    },
-    {
-      "name": "WEBRIP",
-      "implementation": "SourceSpecification",
-      "negate": false,
-      "required": false,
-      "fields": {
-        "value": 4
-      }
-    },
     {
       "name": "BLOOM",
       "implementation": "ReleaseGroupSpecification",
@@ -104,6 +87,24 @@
       "required": false,
       "fields": {
         "value": "^(ViSiON)$"
+      }
+    },
+    {
+      "name": "WEBDL",
+      "implementation": "SourceSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": 3
+      }
+    },
+    {
+      "name": "WEBRIP",
+      "implementation": "SourceSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": 4
       }
     }
   ]

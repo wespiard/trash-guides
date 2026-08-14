@@ -3,29 +3,12 @@
   "trash_scores": {
     "default": 1650,
     "french-multi-vf": 0,
-    "sqp-4-ma-hybrid": 20
+    "sqp-4-ma-hybrid": 20,
+    "german-anime": 250
   },
   "name": "WEB Tier 02",
   "includeCustomFormatWhenRenaming": false,
   "specifications": [
-    {
-      "name": "WEBDL",
-      "implementation": "SourceSpecification",
-      "negate": false,
-      "required": false,
-      "fields": {
-        "value": 7
-      }
-    },
-    {
-      "name": "WEBRIP",
-      "implementation": "SourceSpecification",
-      "negate": false,
-      "required": false,
-      "fields": {
-        "value": 8
-      }
-    },
     {
       "name": "dB",
       "implementation": "ReleaseGroupSpecification",
@@ -123,6 +106,24 @@
       "required": false,
       "fields": {
         "value": "^(XEBEC|4KBEC|CEBEX)$"
+      }
+    },
+    {
+      "name": "WEBDL",
+      "implementation": "SourceSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": 7
+      }
+    },
+    {
+      "name": "WEBRIP",
+      "implementation": "SourceSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": 8
       }
     }
   ]

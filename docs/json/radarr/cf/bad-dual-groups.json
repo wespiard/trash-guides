@@ -4,7 +4,9 @@
     "default": -10000,
     "french-multi-vf": 0,
     "french-multi-vo": 0,
-    "german": -35000
+    "french-vostfr": 0,
+    "german": 0,
+    "german-anime": 0
   },
   "name": "Bad Dual Groups",
   "includeCustomFormatWhenRenaming": false,
@@ -55,12 +57,39 @@
       }
     },
     {
+      "name": "C76",
+      "implementation": "ReleaseGroupSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "^(C76)$"
+      }
+    },
+    {
       "name": "Cory",
       "implementation": "ReleaseGroupSpecification",
       "negate": false,
       "required": false,
       "fields": {
         "value": "^(Cory)$"
+      }
+    },
+    {
+      "name": "CYPHER",
+      "implementation": "ReleaseGroupSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "^(CYPHER)$"
+      }
+    },
+    {
+      "name": "EniaHD",
+      "implementation": "ReleaseGroupSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "^(EniaHD)$"
       }
     },
     {
@@ -124,6 +153,15 @@
       "required": false,
       "fields": {
         "value": "^(MGE\\b.*)$"
+      }
+    },
+    {
+      "name": "MLH",
+      "implementation": "ReleaseGroupSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "^(MLH)$"
       }
     },
     {
@@ -250,6 +288,15 @@
       "required": false,
       "fields": {
         "value": "^(WTV)$"
+      }
+    },
+    {
+      "name": "XiQUEXiQUE",
+      "implementation": "ReleaseGroupSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "^(XiQUEXiQUE)$"
       }
     },
     {

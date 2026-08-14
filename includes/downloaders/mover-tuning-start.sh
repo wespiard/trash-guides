@@ -3,12 +3,12 @@ set -euo pipefail # Exit on error, undefined variables, and pipe failures
 
 # =======================================
 # Script: qBittorrent Cache Mover - Start
-# Version: 1.2.1
-# Updated: 20260129
+# Version: 1.3.3
+# Updated: 20260614
 # =======================================
 
 # Script version and update check URLs
-readonly SCRIPT_VERSION="1.2.1"
+readonly SCRIPT_VERSION="1.3.3"
 readonly SCRIPT_RAW_URL="https://raw.githubusercontent.com/TRaSH-Guides/Guides/refs/heads/master/includes/downloaders/mover-tuning-start.sh"
 readonly CONFIG_RAW_URL="https://raw.githubusercontent.com/TRaSH-Guides/Guides/refs/heads/master/includes/downloaders/mover-tuning.cfg"
 
@@ -62,7 +62,7 @@ set_ownership() {
 # ================================
 detect_config_format() {
     # Check if array-based config is used
-    if [[ -v HOSTS[@] ]] && [[ ${#HOSTS[@]} -gt 0 ]]; then
+    if [[ -v HOSTS ]] && [[ ${#HOSTS[@]} -gt 0 ]]; then
         echo "array"
     else
         echo "legacy"
@@ -96,6 +96,7 @@ get_instance_details() {
         INSTANCE_HOST="${HOSTS[$index]}"
         INSTANCE_USER="${USERS[$index]}"
         INSTANCE_PASSWORD="${PASSWORDS[$index]}"
+        INSTANCE_CA_BUNDLE="${CA_BUNDLES[$index]:-}"
     else
         # Legacy format: map index to old variables
         if [[ $index -eq 0 ]]; then
@@ -103,11 +104,13 @@ get_instance_details() {
             INSTANCE_HOST="${QBIT_HOST_1}"
             INSTANCE_USER="${QBIT_USER_1}"
             INSTANCE_PASSWORD="${QBIT_PASS_1}"
+            INSTANCE_CA_BUNDLE="${QBIT_CA_BUNDLE_1:-}"
         elif [[ $index -eq 1 ]]; then
             INSTANCE_NAME="${QBIT_NAME_2}"
             INSTANCE_HOST="${QBIT_HOST_2}"
             INSTANCE_USER="${QBIT_USER_2}"
             INSTANCE_PASSWORD="${QBIT_PASS_2}"
+            INSTANCE_CA_BUNDLE="${QBIT_CA_BUNDLE_2:-}"
         else
             error "Invalid instance index: $index"
         fi
@@ -355,40 +358,62 @@ run_auto_installer() {
         log "✓ Virtual environment exists"
     fi
 
-    # Activate virtual environment
-    # shellcheck source=/dev/null
-    source "${VENV_PATH}/bin/activate" || error "Failed to activate virtual environment"
+    # Check if Python is available in the virtual environment
+    local venv_python="${VENV_PATH}/bin/python3"
+    [[ -x "$venv_python" ]] || error "Virtual environment Python is missing or not executable: $venv_python"
 
-    # Upgrade pip if needed
     log "Checking pip version..."
-    if pip3 install --upgrade pip --quiet 2>&1 | grep -q "Successfully installed"; then
-        log "✓ Pip upgraded to $(pip3 --version | awk '{print $2}')"
-        set_ownership "$VENV_PATH"
-    else
-        log "✓ Pip is up to date"
+    # Ensure pip exists inside the virtual environment
+    if ! "$venv_python" -m pip --version >/dev/null 2>&1; then
+        log "⚠ pip not found in virtual environment; attempting to bootstrap with ensurepip..."
+        if ! "$venv_python" -m ensurepip --upgrade; then
+            if python3 -c "import qbittorrentapi" 2>/dev/null; then
+                log "⚠ Warning: Failed to bootstrap pip in virtual environment; system Python has qbittorrent-api, continuing"
+            else
+                error "Failed to bootstrap pip in virtual environment and qbittorrent-api is not available in system Python"
+            fi
+        fi
     fi
 
-    # Install/upgrade qbittorrent-api
-    if python3 -c "import qbittorrentapi" 2>/dev/null; then
-        log "✓ qbittorrent-api installed ($(pip3 show qbittorrent-api 2>/dev/null | awk '/Version:/ {print $2}'))"
-
-        # Check for updates
-        if pip3 install --dry-run --upgrade qbittorrent-api 2>&1 | grep -q "Would install"; then
-            log "Upgrading qbittorrent-api..."
-            pip3 install qbittorrent-api --upgrade --quiet || log "⚠ Warning: Failed to upgrade qbittorrent-api"
-            set_ownership "$VENV_PATH"
-            log "✓ qbittorrent-api upgraded"
+    if "$venv_python" -m pip --version >/dev/null 2>&1; then
+        # Upgrade pip
+        if "$venv_python" -m pip install --dry-run --upgrade pip 2>&1 | grep -q "Would install"; then
+            log "Upgrading pip..."
+            if "$venv_python" -m pip install --upgrade pip --quiet; then
+                set_ownership "$VENV_PATH"
+                log "✓ Pip upgraded to $("$venv_python" -m pip --version | awk '{print $2}')"
+            else
+                log "⚠ Warning: Failed to upgrade pip; continuing with existing version ($("$venv_python" -m pip --version | awk '{print $2}'))"
+            fi
         else
-            log "✓ qbittorrent-api is up to date"
+            log "✓ Pip is up to date ($("$venv_python" -m pip --version | awk '{print $2}'))"
+        fi
+
+        # Install/upgrade qbittorrent-api using the same Python that will run mover.py.
+        if "$venv_python" -c "import qbittorrentapi" 2>/dev/null; then
+            log "✓ qbittorrent-api installed ($("$venv_python" -m pip show qbittorrent-api 2>/dev/null | awk '/Version:/ {print $2}'))"
+
+            if "$venv_python" -m pip install --dry-run --upgrade qbittorrent-api 2>&1 | grep -q "Would install"; then
+                log "Upgrading qbittorrent-api..."
+                "$venv_python" -m pip install qbittorrent-api --upgrade --quiet || log "⚠ Warning: Failed to upgrade qbittorrent-api"
+                set_ownership "$VENV_PATH"
+                log "✓ qbittorrent-api upgraded"
+            else
+                log "✓ qbittorrent-api is up to date"
+            fi
+        else
+            log "Installing qbittorrent-api..."
+            "$venv_python" -m pip install qbittorrent-api --quiet || error "Failed to install qbittorrent-api"
+            set_ownership "$VENV_PATH"
+
+            # Verify install with the same interpreter used by mover.py.
+            "$venv_python" -c "import qbittorrentapi" 2>/dev/null || error "qbittorrent-api installed, but cannot be imported by venv Python"
+
+            log "✓ qbittorrent-api installed"
         fi
     else
-        log "Installing qbittorrent-api..."
-        pip3 install qbittorrent-api --quiet || error "Failed to install qbittorrent-api"
-        set_ownership "$VENV_PATH"
-        log "✓ qbittorrent-api installed"
+        log "⚠ Skipping virtual environment package setup because pip is unavailable"
     fi
-
-    deactivate
 
     # Download mover.py if needed
     if [[ ! -f "$MOVER_SCRIPT" ]]; then
@@ -421,8 +446,11 @@ validate_config() {
     done
 
     # Validate docker if needed
-    if [[ "$ENABLE_QBIT_MANAGE" == true ]]; then
-        check_command docker || error "docker is required when ENABLE_QBIT_MANAGE=true"
+    if [[ "$ENABLE_DOCKER_MANAGEMENT" == true ]]; then
+        check_command docker || error "docker is required when ENABLE_DOCKER_MANAGEMENT=true"
+        if [[ ${#DOCKER_CONTAINERS[@]} -eq 0 ]]; then
+            error "DOCKER_CONTAINERS array is empty but ENABLE_DOCKER_MANAGEMENT=true"
+        fi
     fi
 
     # Validate settings
@@ -452,10 +480,18 @@ validate_config() {
         fi
 
         # NAMES array is optional, but if present should match
-        if [[ -v NAMES[@] ]] && [[ ${#NAMES[@]} -gt 0 ]]; then
+        if [[ -v NAMES ]] && [[ ${#NAMES[@]} -gt 0 ]]; then
             if [[ ${#NAMES[@]} -ne ${#HOSTS[@]} ]]; then
                 notify "Configuration Error" "NAMES array length (${#NAMES[@]}) doesn't match HOSTS (${#HOSTS[@]})"
                 error "NAMES array length doesn't match HOSTS"
+            fi
+        fi
+
+        # CA_BUNDLES array is optional, but if present should match
+        if [[ -v CA_BUNDLES ]] && [[ ${#CA_BUNDLES[@]} -gt 0 ]]; then
+            if [[ ${#CA_BUNDLES[@]} -ne ${#HOSTS[@]} ]]; then
+                notify "Configuration Error" "CA_BUNDLES array length (${#CA_BUNDLES[@]}) doesn't match HOSTS (${#HOSTS[@]})"
+                error "CA_BUNDLES array length doesn't match HOSTS"
             fi
         fi
 
@@ -474,19 +510,26 @@ validate_config() {
 # PROCESS QBITTORRENT INSTANCE
 # ================================
 process_qbit_instance() {
-    local name="$1" host="$2" user="$3" password="$4"
+    local name="$1" host="$2" user="$3" password="$4" ca_bundle="${5:-}"
 
     log "Processing $name..."
 
     # Determine Python command
     local python_cmd
-    if [[ -f "${VENV_PATH}/bin/python3" ]]; then
+    if [[ -x "${VENV_PATH}/bin/python3" ]] && "${VENV_PATH}/bin/python3" -c "import qbittorrentapi" 2>/dev/null; then
         python_cmd="${VENV_PATH}/bin/python3"
+        log "✓ Using virtual environment"
     elif python3 -c "import qbittorrentapi" 2>/dev/null; then
         python_cmd="python3"
+        log "✓ Using system Python"
     else
         log "✗ qbittorrent-api not found for $name"
         return 1
+    fi
+
+    local ca_bundle_args=()
+    if [[ -n "$ca_bundle" ]]; then
+        ca_bundle_args=(--ca-bundle "$ca_bundle")
     fi
 
     # Run mover script
@@ -497,7 +540,8 @@ process_qbit_instance() {
         --password "$password" \
         --cache-mount "$CACHE_MOUNT" \
         --days_from "$DAYS_FROM" \
-        --days_to "$DAYS_TO" 2>&1 | while IFS= read -r line; do
+        --days_to "$DAYS_TO" \
+        "${ca_bundle_args[@]}" 2>&1 | while IFS= read -r line; do
             log "  $line"
         done; then
         log "✓ Successfully processed $name"
@@ -537,15 +581,21 @@ main() {
     validate_config
     [[ -f "$MOVER_SCRIPT" ]] || error "mover.py not found at: $MOVER_SCRIPT"
 
-    # Stop qBit-Manage if enabled
-    if [[ "$ENABLE_QBIT_MANAGE" == true ]]; then
-        log "Stopping $QBIT_MANAGE_CONTAINER..."
-        if docker stop "$QBIT_MANAGE_CONTAINER" &> /dev/null; then
-            log "✓ Stopped qBit-Manage"
-            notify "qBit-Manage" "Stopped @ $(date +%H:%M:%S)"
-            sleep "$QBIT_MANAGE_WAIT"
-        else
-            log "⚠ Warning: Failed to stop $QBIT_MANAGE_CONTAINER"
+    # Stop Docker containers if enabled
+    if [[ "$ENABLE_DOCKER_MANAGEMENT" == true ]]; then
+        local stop_failed=0
+        for container in "${DOCKER_CONTAINERS[@]}"; do
+            log "Stopping container: $container..."
+            if docker stop "$container" &> /dev/null; then
+                log "✓ Stopped $container"
+                notify "$container" "Stopped @ $(date +%H:%M:%S)"
+            else
+                log "⚠ Warning: Failed to stop $container"
+                ((stop_failed++)) || true
+            fi
+        done
+        if [[ $stop_failed -eq 0 ]]; then
+            sleep "$DOCKER_WAIT"
         fi
     fi
 
@@ -556,7 +606,7 @@ main() {
     for ((i=0; i<instance_count; i++)); do
         get_instance_details "$i"
 
-        process_qbit_instance "$INSTANCE_NAME" "$INSTANCE_HOST" "$INSTANCE_USER" "$INSTANCE_PASSWORD" || ((failed_instances++))
+        process_qbit_instance "$INSTANCE_NAME" "$INSTANCE_HOST" "$INSTANCE_USER" "$INSTANCE_PASSWORD" "$INSTANCE_CA_BUNDLE" || ((failed_instances++))
     done
 
     # Summary

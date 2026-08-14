@@ -2,30 +2,13 @@
   "trash_id": "c20f169ef63c5f40c2def54abaf4438e",
   "trash_scores": {
     "default": 1700,
+    "sqp-4-ma-hybrid": 30,
     "french-multi-vf": 0,
-    "sqp-4-ma-hybrid": 30
+    "german-anime": 350
   },
   "name": "WEB Tier 01",
   "includeCustomFormatWhenRenaming": false,
   "specifications": [
-    {
-      "name": "WEBDL",
-      "implementation": "SourceSpecification",
-      "negate": false,
-      "required": false,
-      "fields": {
-        "value": 7
-      }
-    },
-    {
-      "name": "WEBRIP",
-      "implementation": "SourceSpecification",
-      "negate": false,
-      "required": false,
-      "fields": {
-        "value": 8
-      }
-    },
     {
       "name": "ABBIE",
       "implementation": "ReleaseGroupSpecification",
@@ -144,6 +127,15 @@
       }
     },
     {
+      "name": "MADSKY",
+      "implementation": "ReleaseGroupSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "^(MADSKY)$"
+      }
+    },
+    {
       "name": "NOSiViD",
       "implementation": "ReleaseGroupSpecification",
       "negate": false,
@@ -213,6 +205,24 @@
       "required": false,
       "fields": {
         "value": "^(ZoroSenpai)$"
+      }
+    },
+    {
+      "name": "WEBDL",
+      "implementation": "SourceSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": 7
+      }
+    },
+    {
+      "name": "WEBRIP",
+      "implementation": "SourceSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": 8
       }
     }
   ]

@@ -3,12 +3,12 @@ set -euo pipefail # Exit on error, undefined variables, and pipe failures
 
 # =====================================
 # Script: qBittorrent Cache Mover - End
-# Version: 1.1.0
-# Updated: 20251201
+# Version: 1.3.4
+# Updated: 20260614
 # =====================================
 
 # Script version and update check URLs
-readonly SCRIPT_VERSION="1.1.0"
+readonly SCRIPT_VERSION="1.3.4"
 readonly SCRIPT_RAW_URL="https://raw.githubusercontent.com/TRaSH-Guides/Guides/refs/heads/master/includes/downloaders/mover-tuning-end.sh"
 
 # Get the directory where the script is located
@@ -49,7 +49,7 @@ notify() {
 # ================================
 detect_config_format() {
     # Check if array-based config is used
-    if [[ -v HOSTS[@] ]] && [[ ${#HOSTS[@]} -gt 0 ]]; then
+    if [[ -v HOSTS ]] && [[ ${#HOSTS[@]} -gt 0 ]]; then
         echo "array"
     else
         echo "legacy"
@@ -83,6 +83,7 @@ get_instance_details() {
         INSTANCE_HOST="${HOSTS[$index]}"
         INSTANCE_USER="${USERS[$index]}"
         INSTANCE_PASSWORD="${PASSWORDS[$index]}"
+        INSTANCE_CA_BUNDLE="${CA_BUNDLES[$index]:-}"
     else
         # Legacy format: map index to old variables
         if [[ $index -eq 0 ]]; then
@@ -90,11 +91,13 @@ get_instance_details() {
             INSTANCE_HOST="${QBIT_HOST_1}"
             INSTANCE_USER="${QBIT_USER_1}"
             INSTANCE_PASSWORD="${QBIT_PASS_1}"
+            INSTANCE_CA_BUNDLE="${QBIT_CA_BUNDLE_1:-}"
         elif [[ $index -eq 1 ]]; then
             INSTANCE_NAME="${QBIT_NAME_2}"
             INSTANCE_HOST="${QBIT_HOST_2}"
             INSTANCE_USER="${QBIT_USER_2}"
             INSTANCE_PASSWORD="${QBIT_PASS_2}"
+            INSTANCE_CA_BUNDLE="${QBIT_CA_BUNDLE_2:-}"
         else
             error "Invalid instance index: $index"
         fi
@@ -204,20 +207,21 @@ install_fclones_binary() {
     LATEST_VERSION=$($GITHUB_API_CMD 2>/dev/null | grep -Po '"tag_name": "\K.*?(?=")') || true
     if [[ -z "$LATEST_VERSION" ]]; then
         log "⚠ Could not fetch latest release, using default version $DEFAULT_VERSION (continuing anyway)"
-        LATEST_VERSION="$DEFAULT_VERSION"
+        LATEST_VERSION="v$DEFAULT_VERSION"
     else
         log "Latest fclones release: $LATEST_VERSION"
     fi
 
+    # Remove leading 'v' for version comparison and filename
+    local VERSION_NO_V="${LATEST_VERSION#v}"
+
     # Compare and install if missing or outdated
-    if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
+    if [[ "$CURRENT_VERSION" != "$VERSION_NO_V" ]]; then
         log "Installing/updating fclones to $LATEST_VERSION..."
 
         local TMP_DIR
         TMP_DIR=$(mktemp -d)
 
-        # Remove leading 'v' from filename
-        local VERSION_NO_V="${LATEST_VERSION#v}"
         local DOWNLOAD_URL="https://github.com/pkolaczk/fclones/releases/download/$LATEST_VERSION/fclones-$VERSION_NO_V-linux-glibc-x86_64.tar.gz"
 
         if ! wget -O "$TMP_DIR/fclones.tar.gz" "$DOWNLOAD_URL" 2>/dev/null; then
@@ -241,15 +245,22 @@ install_fclones_binary() {
         chmod +x /usr/local/bin/fclones 2>/dev/null || true
 
         # Add boot-time copy and PATH setup if not already in /boot/config/go
-        if ! grep -q "fclones boot-time setup" "$GO_FILE" 2>/dev/null; then
-            if [ -w "$GO_FILE" ]; then
-                echo "" >> "$GO_FILE"
-                echo "# fclones boot-time setup" >> "$GO_FILE"
-                echo "export PATH=/usr/local/bin:\$PATH" >> "$GO_FILE"
-                echo "cp $BOOT_DIR/fclones /usr/local/bin/fclones" >> "$GO_FILE"
+        if [ -w "$GO_FILE" ]; then
+            if grep -q "^# fclones boot-time setup$" "$GO_FILE" 2>/dev/null; then
+                # Upgrade legacy boot-time setup from cp to guarded install -m 755
+                sed -i -E \
+                    "s|^[[:space:]]*cp[[:space:]]+.*fclones[[:space:]]+/usr/local/bin/fclones[[:space:]]*$|[ -f \"$BOOT_DIR/fclones\" ] \&\& install -m 755 \"$BOOT_DIR/fclones\" \"$FCLONES_BIN\"|" \
+                    "$GO_FILE"
             else
-                log "⚠ Cannot write to $GO_FILE. Please check permissions. (continuing anyway)"
+                {
+                    echo ""
+                    echo "# fclones boot-time setup"
+                    echo 'export PATH=/usr/local/bin:$PATH'
+                    echo "[ -f \"$BOOT_DIR/fclones\" ] && install -m 755 \"$BOOT_DIR/fclones\" \"$FCLONES_BIN\""
+                } >> "$GO_FILE"
             fi
+        else
+            log "⚠ Cannot write to $GO_FILE. Please check permissions. (continuing anyway)"
         fi
 
         rm -rf "$TMP_DIR"
@@ -352,8 +363,11 @@ validate_config() {
     fi
 
     # Check docker if needed
-    if [[ "$ENABLE_QBIT_MANAGE" == true ]] && ! command -v docker &> /dev/null; then
-        error "docker is required when ENABLE_QBIT_MANAGE=true"
+    if [[ "$ENABLE_DOCKER_MANAGEMENT" == true ]]; then
+        command -v docker &> /dev/null || error "docker is required when ENABLE_DOCKER_MANAGEMENT=true"
+        if [[ ${#DOCKER_CONTAINERS[@]} -eq 0 ]]; then
+            error "DOCKER_CONTAINERS array is empty but ENABLE_DOCKER_MANAGEMENT=true"
+        fi
     fi
 
     # Validate paths and values
@@ -368,13 +382,18 @@ validate_config() {
 
     if [[ "$format" == "array" ]]; then
         # Validate array-based config
-        [[ ${#HOSTS[@]} -gt 0 ]] || error "HOSTS array is empty"
+        [[ -v HOSTS ]] && [[ ${#HOSTS[@]} -gt 0 ]] || error "HOSTS array is empty"
         [[ ${#USERS[@]} -eq ${#HOSTS[@]} ]] || error "USERS array length doesn't match HOSTS"
         [[ ${#PASSWORDS[@]} -eq ${#HOSTS[@]} ]] || error "PASSWORDS array length doesn't match HOSTS"
 
         # NAMES array is optional, but if present should match
-        if [[ -v NAMES[@] ]] && [[ ${#NAMES[@]} -gt 0 ]]; then
+        if [[ -v NAMES ]] && [[ ${#NAMES[@]} -gt 0 ]]; then
             [[ ${#NAMES[@]} -eq ${#HOSTS[@]} ]] || error "NAMES array length doesn't match HOSTS"
+        fi
+
+        # CA_BUNDLES array is optional, but if present should match
+        if [[ -v CA_BUNDLES ]] && [[ ${#CA_BUNDLES[@]} -gt 0 ]]; then
+            [[ ${#CA_BUNDLES[@]} -eq ${#HOSTS[@]} ]] || error "CA_BUNDLES array length doesn't match HOSTS"
         fi
 
         log "✓ Using array-based configuration (${#HOSTS[@]} instance(s))"
@@ -410,12 +429,13 @@ process_qbit_instance() {
     local host="$2"
     local user="$3"
     local password="$4"
+    local ca_bundle="${5:-}"
 
     log "Processing $name..."
 
     # Determine Python command
     local python_cmd
-    if [[ -f "${QBIT_MOVER_PATH}.venv/bin/python3" ]]; then
+    if [[ -x "${QBIT_MOVER_PATH}.venv/bin/python3" ]] && "${QBIT_MOVER_PATH}.venv/bin/python3" -c "import qbittorrentapi" 2>/dev/null; then
         python_cmd="${QBIT_MOVER_PATH}.venv/bin/python3"
         log "✓ Using virtual environment"
     elif python3 -c "import qbittorrentapi" 2>/dev/null; then
@@ -426,6 +446,11 @@ process_qbit_instance() {
         return 1
     fi
 
+    local ca_bundle_args=()
+    if [[ -n "$ca_bundle" ]]; then
+        ca_bundle_args=(--ca-bundle "$ca_bundle")
+    fi
+
     # Execute mover script
     if "$python_cmd" "${QBIT_MOVER_PATH}mover.py" \
         --resume \
@@ -433,7 +458,8 @@ process_qbit_instance() {
         --user "$user" \
         --password "$password" \
         --days_from "$DAYS_FROM" \
-        --days_to "$DAYS_TO"; then
+        --days_to "$DAYS_TO" \
+        "${ca_bundle_args[@]}"; then
         log "✓ Successfully resumed torrents for $name"
         notify "$name" "Resumed @ $(date +%H:%M:%S)"
         return 0
@@ -469,7 +495,7 @@ main() {
     for ((i=0; i<instance_count; i++)); do
         get_instance_details "$i"
 
-        process_qbit_instance "$INSTANCE_NAME" "$INSTANCE_HOST" "$INSTANCE_USER" "$INSTANCE_PASSWORD" || ((failed_instances++))
+        process_qbit_instance "$INSTANCE_NAME" "$INSTANCE_HOST" "$INSTANCE_USER" "$INSTANCE_PASSWORD" "$INSTANCE_CA_BUNDLE" || ((failed_instances++))
     done
 
     # Run duplicate finder if enabled
@@ -484,15 +510,17 @@ main() {
         fi
     fi
 
-    # Start qBit-Manage if enabled
-    if [[ "$ENABLE_QBIT_MANAGE" == true ]]; then
-        log "Starting qBit-Manage container..."
-        if docker start "$QBIT_MANAGE_CONTAINER" &> /dev/null; then
-            log "✓ qBit-Manage started"
-            notify "qBit-Manage" "Started @ $(date +%H:%M:%S)"
-        else
-            log "⚠ Failed to start qBit-Manage"
-        fi
+    # Start Docker containers if enabled
+    if [[ "$ENABLE_DOCKER_MANAGEMENT" == true ]]; then
+        for container in "${DOCKER_CONTAINERS[@]}"; do
+            log "Starting container: $container..."
+            if docker start "$container" &> /dev/null; then
+                log "✓ Started $container"
+                notify "$container" "Started @ $(date +%H:%M:%S)"
+            else
+                log "⚠ Failed to start $container"
+            fi
+        done
     fi
 
     # Summary

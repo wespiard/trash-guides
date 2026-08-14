@@ -2,7 +2,8 @@
   "trash_id": "90a6f9a284dff5103f6346090e6280c8",
   "trash_scores": {
     "default": -10000,
-    "german": -35000
+    "german": -35000,
+    "german-anime": -35000
   },
   "name": "LQ",
   "includeCustomFormatWhenRenaming": false,
@@ -170,6 +171,15 @@
       }
     },
     {
+      "name": "CLEANUP",
+      "implementation": "ReleaseGroupSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "^(CLEANUP)$"
+      }
+    },
+    {
       "name": "COLLECTiVE",
       "implementation": "ReleaseGroupSpecification",
       "negate": false,
@@ -311,6 +321,15 @@
       "required": false,
       "fields": {
         "value": "^(FRDS)$"
+      }
+    },
+    {
+      "name": "FS",
+      "implementation": "ReleaseGroupSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "^(FS)$"
       }
     },
     {
@@ -692,6 +711,15 @@
       }
     },
     {
+      "name": "RBB",
+      "implementation": "ReleaseGroupSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "^(RBB)$"
+      }
+    },
+    {
       "name": "RDN",
       "implementation": "ReleaseGroupSpecification",
       "negate": false,
@@ -770,6 +798,15 @@
       "required": false,
       "fields": {
         "value": "^(SUNSCREEN)$"
+      }
+    },
+    {
+      "name": "SyncUP",
+      "implementation": "ReleaseGroupSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "^(SyncUP)$"
       }
     },
     {
