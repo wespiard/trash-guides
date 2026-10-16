@@ -28,6 +28,15 @@
       }
     },
     {
+      "name": "ANDY",
+      "implementation": "ReleaseGroupSpecification",
+      "negate": false,
+      "required": false,
+      "fields": {
+        "value": "^(ANDY)$"
+      }
+    },
+    {
       "name": "APEX",
       "implementation": "ReleaseGroupSpecification",
       "negate": false,
